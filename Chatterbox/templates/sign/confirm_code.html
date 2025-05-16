@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h2>Подтверждение регистрации</h2>
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="code">Введите код из письма:</label>
+        <input type="text" name="code" required>
+    </div>
+    <button type="submit">Подтвердить</button>
+</form>
+{% endblock %}

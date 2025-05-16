@@ -1,34 +1,41 @@
 from django.db import models
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from allauth.account.forms import SignupForm
-from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+import random
+import string
+from django.utils import timezone
+from datetime import timedelta
+from django.conf import settings
 
-class BaseRegisterForm(UserCreationForm):
-    email = forms.EmailField(label="Email")
-    first_name = forms.CharField(label="Имя")
-    last_name = forms.CharField(label="Фамилия")
-
-    class Meta:
-        model = User
-        fields = ("username",
-                  "first_name",
-                  "last_name",
-                  "email",
-                  "password1",
-                  "password2", )
-
-class BasicSignupForm(SignupForm):
-
-    def save(self, request):
-        user = super(BasicSignupForm, self).save(request)
-        common_group = Group.objects.get(name='common')
-        common_group.user_set.add(user)
-        return user
 
 class OneTimeCode(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    code = models.CharField(max_length=8)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
-    expired_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)  # Добавлено default=0
+
+    def str(self):
+        return f"{self.user.username}: {self.code}"
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=15)
+
+    def generate_code(self):
+        self.code = ''.join(random.choices(string.digits, k=6))
+        self.save()
+        return self.code
+
+    def send_confirmation_email(self):
+        send_mail(
+            'Код подтверждения для MMORPG',
+            f'Ваш код подтверждения: {self.code}\n\n'
+            f'Введите его на странице: {settings.SITE_URL}/sign/confirm-code/',
+            settings.DEFAULT_FROM_EMAIL,
+            [self.user.email],
+            fail_silently=False,
+        )
+
+    def increment_attempts(self):
+        self.attempts += 1
+        self.save()
+        return self.attempts
