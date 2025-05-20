@@ -4,9 +4,12 @@ from .models import Ads, Response, Category
 class AdForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
+        required= False,
         label='Категория',
         empty_label="Выберите категорию",
+        to_field_name= 'name',
         widget=forms.Select(attrs={'class':'form-control'}))
+
     class Meta:
         model = Ads
         fields = ['title', 'description', 'category', 'image']

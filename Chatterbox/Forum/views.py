@@ -26,7 +26,8 @@ class AdsCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        messages.success(self.request, 'Объявление успешно создано!')
+        if not form.cleaned_data.get('category'):
+            form.instance.category = None
         return super().form_valid(form)
 
 class AdsUpdate(LoginRequiredMixin, UpdateView):

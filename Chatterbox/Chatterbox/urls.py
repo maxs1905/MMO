@@ -21,7 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('Forum.urls')),  # Главная страница теперь ведет на ads_list
+    path('', include('Forum.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),

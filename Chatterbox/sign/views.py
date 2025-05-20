@@ -6,22 +6,16 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from .models import OneTimeCode
 from .forms import BaseRegisterForm
-from django.core.mail import send_mail
-import random
-import string
-from django.utils import timezone
-from datetime import timedelta
-from django.contrib.auth.backends import ModelBackend
 
 class BaseRegisterView(CreateView):
     model = User
     form_class = BaseRegisterForm
     template_name = 'sign/signup.html'
-    success_url = reverse_lazy('confirm_code')  # Перенаправляем на страницу ввода кода
+    success_url = reverse_lazy('confirm_code')
 
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.is_active = False  # Пользователь неактивен до подтверждения кода
+        user.is_active = False
         user.save()
 
         # Создаем и отправляем код
@@ -42,21 +36,18 @@ def login_with_code_view(request):
             user = User.objects.get(username=username)
             otp = OneTimeCode.objects.get(user=user)
 
-            # Проверяем количество попыток
             if otp.attempts >= 3:
                 otp.delete()
                 messages.error(request, 'Превышено количество попыток. Зарегистрируйтесь снова.')
                 return redirect('signup')
 
-            # Проверяем срок действия кода
             if otp.is_expired():
                 otp.delete()
                 messages.error(request, 'Код истёк. Зарегистрируйтесь снова.')
                 return redirect('signup')
 
-            # Проверяем код
+
             if otp.code == code_input:
-                # Активируем пользователя
                 user.is_active = True
                 user.save()
 
@@ -105,7 +96,6 @@ def confirm_code(request):
                 user.is_active = True
                 user.save()
 
-                # Явно указываем бэкенд при логине
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
                 otp.delete()
