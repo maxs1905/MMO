@@ -21,11 +21,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('Forum.urls')),  # Главная страница теперь ведет на ads_list
     path('pages/', include('django.contrib.flatpages.urls')),
-    path('', include('protect.urls')),
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
-
+    path('protect/', include('protect.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

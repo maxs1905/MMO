@@ -1,27 +1,44 @@
-{% extends 'flatpages/default.html' %}
+{% extends 'main.html' %}
 
 {% block content %}
-  <h1>{{ ad.title }}</h1>
-  <table>
-    <tr>
-      <td><strong>Заголовок:</strong></td>
-      <td>{{ ad.title }}</td>
-    </tr>
-    <tr>
-      <td><strong>Дата публикации:</strong></td>
-      <td>{{ ad.created_time|date:'d M Y' }}</td>
-    </tr>
-    <tr>
-      <td><strong>Категория:</strong></td>
-      <td>{{ ad.category.name }}</td>
-    </tr>
-    <tr>
-      <td><strong>Автор:</strong></td>
-      <td>{{ ad.user.username }}</td>
-    </tr>
-    <tr>
-      <td><strong>Текст объявления:</strong></td>
-      <td>{{ ad.description|safe }}</td>
-    </tr>
-  </table>
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="card-title">{{ ad.title }}</h1>
+        <p class="text-muted">
+            Автор: {{ ad.user.username }} |
+            Дата: {{ ad.create_time|date:"d.m.Y H:i" }} |
+            Категория: {{ ad.category.name|default:"Без категории" }}
+        </p>
+
+        {% if ad.image %}
+        <img src="{{ ad.image.url }}" class="img-fluid mb-3" alt="{{ ad.title }}">
+        {% endif %}
+
+        <div class="ck-content">
+            {{ ad.description|safe }}
+        </div>
+
+        {% if user == ad.user %}
+        <div class="mt-3">
+            <a href="{% url 'ad_edit' ad.pk %}" class="btn btn-secondary">Редактировать</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if user.is_authenticated and user != ad.user %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="card-title">Оставить отклик</h3>
+        <form method="post" action="{% url 'create_response' ad.pk %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="text" class="form-control" rows="3" required
+                          placeholder="Напишите ваш отклик здесь..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -6,10 +6,13 @@ class ForumConfig(AppConfig):
     name = 'Forum'
 
     def ready(self):
-        from .models import Category
-        categories = [
-            'Танки', 'Хилы', 'ДД', 'Торговцы', 'Гилдмастеры',
-            'Квестгиверы', 'Кузнецы', 'Кожевники', 'Зельевары', 'Мастера заклинаний'
-        ]
-        for cat in categories:
-            Category.objects.get_or_create(name=cat)
+        # Подключаем сигналы
+        from . import signals
+
+        # Создаем категории по умолчанию
+        try:
+            from .models import Category
+            Category.create_default_categories()
+        except:
+            # Игнорируем ошибки при миграциях
+            pass

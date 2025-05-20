@@ -1,50 +1,29 @@
-{% extends 'flatpages/default.html' %}
-
-{% block title %}
-Список объявлений
-{% endblock title %}
+{% extends 'main.html' %}
 
 {% block content %}
-  <h1>Все объявления</h1>
-  <h3>Количество объявлений: {{ ads|length }}</h3>
+<h1 class="mb-4">Все объявления</h1>
 
-  {% if ads %}
-    <table>
-      <tr>
-        <td>Заголовок</td>
-        <td>Дата публикации</td>
-        <td>Категория</td>
-        <td>Действия</td>
-      </tr>
-      {% for ad in ads %}
-        <tr>
-          <td>{{ ad.title }}</td>
-          <td>{{ ad.created_at|date:'d M Y' }}</td>
-          <td>{{ ad.category.name }}</td>
-          <td><a href="{% url 'ads_detail' ad.id %}">Читать полностью...</a></td>
-        </tr>
-      {% endfor %}
-    </table>
-  {% else %}
-    <h2>Объявлений нет!</h2>
-  {% endif %}
+<div class="mb-3">
+    <a href="{% url 'create_ad' %}" class="btn btn-primary">Создать объявление</a>
+</div>
 
-  {# Пагинация #}
-  {% if page_obj.has_previous %}
-    <a href="?page=1">1</a>
-    {% if page_obj.previous_page_number != 1 %}
-      ...
-      <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
-    {% endif %}
-  {% endif %}
+{% if ads %}
+<div class="list-group">
+    {% for ad in ads %}
+    <div class="list-group-item mb-3">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><a href="{% url 'ads_detail' ad.pk %}">{{ ad.title }}</a></h5>
+            <small class="text-muted">{{ ad.create_time|date:"d.m.Y H:i" }}</small>
+        </div>
+        <p class="mb-1">{{ ad.description|striptags|truncatechars:200 }}</p>
+        <small class="text-muted">Категория: {{ ad.category.name|default:"Без категории" }}</small>
+    </div>
+    {% endfor %}
+</div>
 
-  {{ page_obj.number }}
+{% include 'pagination.html' with page_obj=page_obj %}
 
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-    {% if paginator.num_pages != page_obj.next_page_number %}
-      ...
-      <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
-    {% endif %}
-  {% endif %}
-{% endblock content %}
+{% else %}
+<div class="alert alert-info">Объявлений пока нет</div>
+{% endif %}
+{% endblock %}

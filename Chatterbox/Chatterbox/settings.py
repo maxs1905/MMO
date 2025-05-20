@@ -179,3 +179,10 @@ SOCIALACCOUNT_PROVIDERS = {
 
 ACCOUNT_FORMS = {'signup': 'sign.forms.CustomSignupForm'}
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}
