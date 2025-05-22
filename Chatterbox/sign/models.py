@@ -12,7 +12,7 @@ class OneTimeCode(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
-    attempts = models.PositiveSmallIntegerField(default=0)  # Добавлено default=0
+    attempts = models.PositiveSmallIntegerField(default=0)
 
     def str(self):
         return f"{self.user.username}: {self.code}"

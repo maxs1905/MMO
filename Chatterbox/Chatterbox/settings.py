@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     'protect',
     'allauth',
     'allauth.account',
-    #'allauth.socialaccount',
-    #'allauth.socialaccount.providers.yandex',
 ]
 SITE_ID = 1
 SITE_URL = 'http://127.0.0.1:8000'

@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from allauth.account.forms import SignupForm
-from django.contrib.auth.models import Group
 from .models import OneTimeCode
 
 
@@ -41,10 +40,10 @@ class CustomSignupForm(SignupForm):
 
     def save(self, request):
         user = super().save(request)
-        user.is_active = False  # Делаем пользователя неактивным
+        user.is_active = False
         user.save()
 
-        # Создаем и отправляем код
+
         code = OneTimeCode.objects.create(user=user)
         code.generate_code()
         code.send_confirmation_email()
