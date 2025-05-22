@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>История рассылок</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Дата создания</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in object_list %}
+            <tr>
+                <td>{{ item.subject }}</td>
+                <td>{{ item.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    {% if item.sent_at %}
+                        Отправлено {{ item.sent_at|date:"d.m.Y H:i" }}
+                    {% else %}
+                        <a href="{% url 'newsletter_send' item.pk %}" class="btn btn-sm btn-success">Отправить</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

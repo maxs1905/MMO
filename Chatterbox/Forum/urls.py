@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     AdsList, AdsDetail, AdsCreate, AdsUpdate,
-    ResponseListView, create_response, accept_response
+    ResponseListView, create_response, accept_response, NewsletterListView, NewsletterCreateView
 )
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path('ads/<int:pk>/response/', create_response, name='create_response'),
     path('responses/', ResponseListView.as_view(), name='responses'),
     path('responses/<int:pk>/accept/', accept_response, name='accept_response'),
+    path('newsletters/', NewsletterListView.as_view(), name='newsletter_list'),
+    path('newsletters/create/', NewsletterCreateView.as_view(), name='newsletter_create'),
 ]

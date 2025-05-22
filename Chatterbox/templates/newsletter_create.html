@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Создать рассылку</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="save" class="btn btn-primary">Сохранить</button>
+        <button type="submit" name="send_now" class="btn btn-success">Отправить сейчас</button>
+    </form>
+</div>
+{% endblock %}

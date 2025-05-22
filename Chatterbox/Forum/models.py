@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 from ckeditor.fields import RichTextField
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -43,7 +44,7 @@ class Ads(models.Model):
     )
     category = models.ForeignKey(
         Category,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='ads',
@@ -128,3 +129,35 @@ class Response(models.Model):
             [self.user.email],
             fail_silently=False,
         )
+
+
+class Newsletter(models.Model):
+    subject = models.CharField('Тема', max_length=200)
+    message = models.TextField('Сообщение')
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    sent_at = models.DateTimeField('Дата отправки', null=True, blank=True)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Автор'
+    )
+
+    def str(self):
+        return self.subject
+
+    def send(self):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        recipients = User.objects.filter(is_active=True)
+        for user in recipients:
+            send_mail(
+                self.subject,
+                self.message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+        self.sent_at = timezone.now()
+        self.save()

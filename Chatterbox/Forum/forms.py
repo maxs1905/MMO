@@ -4,7 +4,7 @@ from .models import Ads, Response, Category
 class AdForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
-        required= False,
+        required=False,
         label='Категория',
         empty_label="Выберите категорию",
         to_field_name= 'name',
