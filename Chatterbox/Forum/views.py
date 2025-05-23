@@ -6,6 +6,8 @@ from django.urls import reverse_lazy
 from .models import Ads, Response
 from .forms import AdForm
 from .models import Newsletter
+
+
 class AdsList(ListView):
     model = Ads
     template_name = 'ads_list.html'
@@ -47,7 +49,17 @@ class ResponseListView(LoginRequiredMixin, ListView):
     context_object_name = 'responses'
 
     def get_queryset(self):
-        return Response.objects.filter(ad__user=self.request.user)
+        queryset = Response.objects.filter(ad__user=self.request.user)
+        ad_filter = self.request.GET.get('ad_filter')
+        if ad_filter:
+            queryset = queryset.filter(ad_id=ad_filter)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_ads'] = Ads.objects.filter(user=self.request.user)
+        context['current_filter'] = self.request.GET.get('ad_filter')
+        return context
 
 def create_response(request, pk):
     if request.method == 'POST':
@@ -89,3 +101,5 @@ class NewsletterListView(PermissionRequiredMixin, ListView):
     model = Newsletter
     template_name = 'newsletter_list.html'
     permission_required = 'Forum.can_view_newsletter'
+
+

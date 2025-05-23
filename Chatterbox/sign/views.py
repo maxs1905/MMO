@@ -15,7 +15,7 @@ class BaseRegisterView(CreateView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.is_active = False
+        user.is_active = True
         user.save()
 
         # Создаем и отправляем код
@@ -106,3 +106,4 @@ def confirm_code(request):
             messages.error(request, 'Неверный код подтверждения')
 
     return render(request, 'sign/confirm_code.html')
+

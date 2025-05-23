@@ -42,13 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'Forum',
     'ckeditor',
     'templates',
     'sign',
     'protect',
     'allauth',
     'allauth.account',
+    'Forum.apps.ForumConfig',
 ]
 SITE_ID = 1
 SITE_URL = 'http://127.0.0.1:8000'
@@ -86,7 +86,6 @@ TEMPLATES = [
 ]
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 WSGI_APPLICATION = 'Chatterbox.wsgi.application'
 
@@ -161,8 +160,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
-
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'Maxs.defmail@yandex.ru'

@@ -38,6 +38,19 @@
     </div>
     {% endfor %}
 </div>
+<div class="mb-3">
+    <form method="get" class="form-inline">
+        <select name="ad_filter" class="form-control mr-2">
+            <option value="">Все объявления</option>
+            {% for ad in user_ads %}
+            <option value="{{ ad.id }}" {% if current_filter == ad.id|stringformat:"s" %}selected{% endif %}>
+                {{ ad.title }}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Фильтровать</button>
+    </form>
+</div>
 
 {% include 'pagination.html' with page_obj=page_obj %}
 

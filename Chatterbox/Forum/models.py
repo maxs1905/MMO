@@ -4,9 +4,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 from ckeditor.fields import RichTextField
 from django.utils import timezone
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 User = get_user_model()
-
 
 class Category(models.Model):
     name = models.CharField('Название', max_length=100, unique=True)
@@ -99,38 +101,40 @@ class Response(models.Model):
         return f'Отклик от {self.user.username} на "{self.ad.title}"'
 
     def send_notification(self):
+        """Отправляет уведомление автору объявления о новом отклике"""
         subject = f'Новый отклик на ваше объявление "{self.ad.title}"'
-        message = f'''Пользователь {self.user.username} оставил отклик:
+        html_message = render_to_string('new_response.html', {
+            'response': self,
+            'ad': self.ad,
+            'site_url': settings.SITE_URL
+        })
+        plain_message = strip_tags(html_message)
 
-{self.text}
-
-Просмотреть: {settings.SITE_URL}{self.ad.get_absolute_url()}
-'''
         send_mail(
             subject,
-            message,
+            plain_message,
             settings.DEFAULT_FROM_EMAIL,
             [self.ad.user.email],
-            fail_silently=False,
+            html_message=html_message
         )
 
     def send_accept_notification(self):
+        """Отправляет уведомление автору отклика о его принятии"""
         subject = f'Ваш отклик на "{self.ad.title}" принят!'
-        message = f'''Ваш отклик был принят:
+        html_message = render_to_string('response_accepted.html', {
+            'response': self,
+            'ad': self.ad,
+            'site_url': settings.SITE_URL
+        })
+        plain_message = strip_tags(html_message)
 
-{self.text}
-
-Свяжитесь с автором: {self.ad.user.email}
-'''
         send_mail(
             subject,
-            message,
+            plain_message,
             settings.DEFAULT_FROM_EMAIL,
             [self.user.email],
-            fail_silently=False,
+            html_message=html_message
         )
-
-
 class Newsletter(models.Model):
     subject = models.CharField('Тема', max_length=200)
     message = models.TextField('Сообщение')

@@ -3,11 +3,8 @@ from django.dispatch import receiver
 from .models import Response
 
 @receiver(post_save, sender=Response)
-def notify_new_response(sender, instance, created, **kwargs):
+def send_response_notification(sender, instance, created, **kwargs):
     if created:
         instance.send_notification()
-
-@receiver(post_save, sender=Response)
-def notify_accepted_response(sender, instance, **kwargs):
-    if instance.is_accepted and not kwargs.get('created'):
+    elif instance.is_accepted:
         instance.send_accept_notification()

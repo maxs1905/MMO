@@ -14,4 +14,5 @@ urlpatterns = [
     path('responses/<int:pk>/accept/', accept_response, name='accept_response'),
     path('newsletters/', NewsletterListView.as_view(), name='newsletter_list'),
     path('newsletters/create/', NewsletterCreateView.as_view(), name='newsletter_create'),
+
 ]
