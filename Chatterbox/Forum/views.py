@@ -25,12 +25,13 @@ class AdsCreate(LoginRequiredMixin, CreateView):
     form_class = AdForm
     template_name = 'create_ad.html'
     success_url = reverse_lazy('ads_list')
+    permission_required = 'Forum.add_ads'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        if not form.cleaned_data.get('category'):
-            form.instance.category = None
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        print(f"Redirecting to: {self.get_success_url()}")
+        return response
 
 class AdsUpdate(LoginRequiredMixin, UpdateView):
     model = Ads

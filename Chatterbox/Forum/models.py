@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -37,7 +37,7 @@ class Category(models.Model):
 
 class Ads(models.Model):
     title = models.CharField('Заголовок', max_length=255)
-    description = RichTextField('Описание')
+    content = RichTextUploadingField('Содержание')
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -54,12 +54,6 @@ class Ads(models.Model):
     )
     create_time = models.DateTimeField('Дата создания', auto_now_add=True)
     update_time = models.DateTimeField('Дата обновления', auto_now=True)
-    image = models.ImageField(
-        'Изображение',
-        upload_to='ads_images/',
-        null=True,
-        blank=True
-    )
     is_active = models.BooleanField('Активно', default=True)
 
     class Meta:
@@ -73,6 +67,16 @@ class Ads(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('ads_detail', kwargs={'pk': self.pk})
+
+    def save(self, *args, **kwargs):
+        print("Saving Ads instance...")  # Отладочный вывод
+        try:
+            super().save(*args, **kwargs)
+            print("Ads instance saved successfully")
+        except Exception as e:
+            print("Error saving Ads instance:", str(e))
+            raise
+
 
 
 class Response(models.Model):

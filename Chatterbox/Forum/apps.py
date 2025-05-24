@@ -5,10 +5,8 @@ class ForumConfig(AppConfig):
     name = 'Forum'
 
     def ready(self):
-        # Импортируем сигналы
         from . import signals
 
-        # Создаем стандартные категории
         from .models import Category
         try:
             Category.create_default_categories()

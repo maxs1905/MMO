@@ -9,6 +9,11 @@
                     <h2 class="text-center">Регистрация</h2>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <strong>Внимание!</strong> После регистрации вы будете перенаправлены на страницу активации.
+                        На вашу почту будет отправлен код подтверждения для завершения регистрации.
+                    </div>
+
                     <form method="post">
                         {% csrf_token %}
                         {% for field in form %}
@@ -25,6 +30,10 @@
                         {% endfor %}
                         <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
                     </form>
+
+                    <div class="mt-3 text-center">
+                        Уже зарегистрированы? <a href="{% url 'account_login' %}">Войти</a>
+                    </div>
                 </div>
             </div>
         </div>

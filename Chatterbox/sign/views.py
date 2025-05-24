@@ -106,4 +106,3 @@ def confirm_code(request):
             messages.error(request, 'Неверный код подтверждения')
 
     return render(request, 'sign/confirm_code.html')
-

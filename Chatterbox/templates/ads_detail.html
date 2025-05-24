@@ -10,12 +10,9 @@
             Категория: {{ ad.category.name|default:"Без категории" }}
         </p>
 
-        {% if ad.image %}
-        <img src="{{ ad.image.url }}" class="img-fluid mb-3" alt="{{ ad.title }}">
-        {% endif %}
 
         <div class="ck-content">
-            {{ ad.description|safe }}
+            {{ ad.content|safe }}
         </div>
 
         {% if user == ad.user %}
